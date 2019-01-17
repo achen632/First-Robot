@@ -49,70 +49,66 @@ import com.qualcomm.robotcore.util.Range;
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
-@Disabled
+@SuppressWarnings("unused")
+@TeleOp(name="Shmada Software", group="Linear Opmode")
 public class First_Code extends LinearOpMode {
 
-    // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
 
-    private double dpadspeed = ;
-    private double joystickspeed = 0;
+    private double dpadspeed = 1;
+    private double dpadturnspeed = dpadspeed *= 0.7;
+    private double joystickspeed = .2;
+    private double joystickturnspeed = joystickspeed *= 0.7;
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
-
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
+        // Initializing
+        leftDrive  = hardwareMap.get(DcMotor.class, "leftDrive");
+        rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
-
-        // Wait for the game to start (driver presses PLAY)
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
         waitForStart();
-        runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
+        // Active
         while (opModeIsActive()) {
 
             if(gamepad1.dpad_up){
-                rightdrive.setpower(dpadspeed);
-                leftdrive.setpower(dpadspeed);
+                rightDrive.setPower(dpadspeed);
+                leftDrive.setPower(dpadspeed);
+            }else{
+                rightDrive.setPower(0);
+                leftDrive.setPower(0);
             }
 
             if(gamepad1.dpad_down){
-                rightdrive.setpower(-dpadspeed);
-                leftdrive.setpower(-dpadspeed);
+                rightDrive.setPower(-dpadspeed);
+                leftDrive.setPower(-dpadspeed);
+            }else{
+                rightDrive.setPower(0);
+                leftDrive.setPower(0);
             }
 
             if(gamepad1.dpad_left){
-                rightdrive.setpower(dpadspeed);
-                leftdrive.setpower(-dpadspeed);
+                rightDrive.setPower(dpadturnspeed);
+                leftDrive.setPower(-dpadturnspeed);
+            }else{
+                rightDrive.setPower(0);
+                leftDrive.setPower(0);
             }
 
             if(gamepad1.dpad_right){
-                rightdrive.setpower(-dpadspeed);
-                leftdrive.setpower(dpadspeed);
+                rightDrive.setPower(-dpadturnspeed);
+                leftDrive.setPower(dpadturnspeed);
+            }else{
+                rightDrive.setPower(0);
+                leftDrive.setPower(0);
             }
 
-            if(gamepad1.left_stick_x){
-
-            }
-
-            if(gamepad1.left_stick_y){
-
-            }
-
+//            Archived Code
 //            // Setup a variable for each drive wheel to save power level for telemetry
 //            double leftPower;
 //            double rightPower;
