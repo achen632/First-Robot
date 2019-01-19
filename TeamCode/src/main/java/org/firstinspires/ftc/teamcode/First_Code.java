@@ -33,42 +33,36 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+@TeleOp(name="Drive Code", group="Shmada Software")
 
-/**
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
-@SuppressWarnings("unused")
-@TeleOp(name="Shmada Software", group="Linear Opmode")
 public class First_Code extends LinearOpMode {
 
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
 
-    private double dpadspeed = 1;
-    private double dpadturnspeed = dpadspeed *= 0.7;
-    private double joystickspeed = .2;
-    private double joystickturnspeed = joystickspeed *= 0.7;
+    // Drive Speeds
+    private double dpadSpeed = .3;
+    private double stickSpeed = .5;
+
+    // Turn Speeds
+    private double turnMultiplier = .8;
+    private double dpadTurnSpeed = dpadSpeed * turnMultiplier;
+    private double stickTurnSpeed = stickSpeed * turnMultiplier;
 
     @Override
     public void runOpMode() {
 
-        // Initializing
-        leftDrive  = hardwareMap.get(DcMotor.class, "leftDrive");
-        rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        // Initial
+        leftDrive  = hardwareMap.get(DcMotor.class, "left");
+        leftDrive.setDirection(DcMotor.Direction.REVERSE);
+        
+        rightDrive = hardwareMap.get(DcMotor.class, "right");
+        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
@@ -76,66 +70,58 @@ public class First_Code extends LinearOpMode {
         // Active
         while (opModeIsActive()) {
 
-            if(gamepad1.dpad_up){
-                rightDrive.setPower(dpadspeed);
-                leftDrive.setPower(dpadspeed);
+            ////////////// DRIVE CODE //////////////
+
+            if(gamepad1.right_trigger > 0){
+                telemetry.addData("Speed", "Sonic");
+                telemetry.update();
+                stickSpeed = 1;
+                dpadSpeed = 0.6;
+            }else{
+                stickSpeed = 0.5;
+                dpadSpeed = 0.3;
+                telemetry.addData("Speed", "Snail");
+                telemetry.update();
+            }
+
+            // DUAL STICK DRIVE
+
+            if(gamepad1.left_stick_y < 0){
+                rightDrive.setPower(stickSpeed);
+                leftDrive.setPower(stickSpeed);
+
+            }else if(gamepad1.left_stick_y > 0){
+                rightDrive.setPower(-stickSpeed);
+                leftDrive.setPower(-stickSpeed);
+
+            }else if(gamepad1.right_stick_x > 0){
+                rightDrive.setPower(-stickTurnSpeed);
+                leftDrive.setPower(stickTurnSpeed);
+
+            }else if(gamepad1.right_stick_x < 0) {
+                rightDrive.setPower(stickTurnSpeed);
+                leftDrive.setPower(-stickTurnSpeed);
+
+            // DPAD DRIVE
+            }else if(gamepad1.dpad_up){
+                rightDrive.setPower(dpadSpeed);
+                leftDrive.setPower(dpadSpeed);
+
+            }else if(gamepad1.dpad_down){
+                rightDrive.setPower(-dpadSpeed);
+                leftDrive.setPower(-dpadSpeed);
+
+            }else if(gamepad1.dpad_left){
+                rightDrive.setPower(dpadTurnSpeed);
+                leftDrive.setPower(-dpadTurnSpeed);
+
+            }else if(gamepad1.dpad_right){
+                rightDrive.setPower(-dpadTurnSpeed);
+                leftDrive.setPower(dpadTurnSpeed);
             }else{
                 rightDrive.setPower(0);
                 leftDrive.setPower(0);
             }
-
-            if(gamepad1.dpad_down){
-                rightDrive.setPower(-dpadspeed);
-                leftDrive.setPower(-dpadspeed);
-            }else{
-                rightDrive.setPower(0);
-                leftDrive.setPower(0);
-            }
-
-            if(gamepad1.dpad_left){
-                rightDrive.setPower(dpadturnspeed);
-                leftDrive.setPower(-dpadturnspeed);
-            }else{
-                rightDrive.setPower(0);
-                leftDrive.setPower(0);
-            }
-
-            if(gamepad1.dpad_right){
-                rightDrive.setPower(-dpadturnspeed);
-                leftDrive.setPower(dpadturnspeed);
-            }else{
-                rightDrive.setPower(0);
-                leftDrive.setPower(0);
-            }
-
-//            Archived Code
-//            // Setup a variable for each drive wheel to save power level for telemetry
-//            double leftPower;
-//            double rightPower;
-//
-//            // Choose to drive using either Tank Mode, or POV Mode
-//            // Comment out the method that's not used.  The default below is POV.
-//
-//            // POV Mode uses left stick to go forward, and right stick to turn.
-//            // - This uses basic math to combine motions and is easier to drive straight.
-//            double drive = -gamepad1.left_stick_y;
-//            double turn  =  gamepad1.right_stick_x;
-//            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-//            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-//
-//            // Tank Mode uses one stick to control each wheel.
-//            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-//            // leftPower  = -gamepad1.left_stick_y ;
-//            // rightPower = -gamepad1.right_stick_y ;
-//
-//            // Send calculated power to wheels
-//            leftDrive.setPower(leftPower);
-//            rightDrive.setPower(rightPower);
-//
-//            // Show the elapsed game time and wheel power.
-//            telemetry.addData("Status", "Run Time: " + runtime.toString());
-//            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-//            telemetry.update();
         }
     }
 }
