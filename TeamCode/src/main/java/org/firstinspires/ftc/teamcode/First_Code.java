@@ -43,6 +43,7 @@ public class First_Code extends LinearOpMode {
 
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
+    private DcMotor latchMech = null;
 
     // Drive Speeds
     private double dpadSpeed = .3;
@@ -53,15 +54,24 @@ public class First_Code extends LinearOpMode {
     private double dpadTurnSpeed = dpadSpeed * turnMultiplier;
     private double stickTurnSpeed = stickSpeed * turnMultiplier;
 
+    // Mech Speeds
+    private double maxSpeed = 1;
+
     @Override
     public void runOpMode() {
 
         // Initial
+
+        // Drive
         leftDrive  = hardwareMap.get(DcMotor.class, "left");
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        
+
         rightDrive = hardwareMap.get(DcMotor.class, "right");
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        // Mech
+        latchMech = hardwareMap.get(DcMotor.class, "latch");
+        latchMech.setDirection(DcMotor.Direction.FORWARD);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -70,7 +80,6 @@ public class First_Code extends LinearOpMode {
         // Active
         while (opModeIsActive()) {
 
-            ////////////// DRIVE CODE //////////////
 
             if(gamepad1.right_trigger > 0){
                 telemetry.addData("Speed", "Sonic");
@@ -121,6 +130,18 @@ public class First_Code extends LinearOpMode {
             }else{
                 rightDrive.setPower(0);
                 leftDrive.setPower(0);
+            }
+
+            ////////////// MECH CODE //////////////
+
+            // LATCH MECH
+
+            if(gamepad1.right_bumper){
+                latchMech.setPower(maxSpeed);
+            }else if(gamepad1.left_bumper){
+                latchMech.setPower(-maxSpeed);
+            }else{
+                latchMech.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
         }
     }
