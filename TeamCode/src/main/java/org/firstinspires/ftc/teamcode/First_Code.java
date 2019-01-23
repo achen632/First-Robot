@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -44,18 +45,20 @@ public class First_Code extends LinearOpMode {
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
     private DcMotor latchMech = null;
+    private Servo spongeMechR = null;
+    private Servo spongeMechL = null;
 
     // Drive Speeds
     private double dpadSpeed = .3;
     private double stickSpeed = .5;
 
     // Turn Speeds
-    private double turnMultiplier = .8;
+    private double turnMultiplier = .9;
     private double dpadTurnSpeed = dpadSpeed * turnMultiplier;
     private double stickTurnSpeed = stickSpeed * turnMultiplier;
 
     // Mech Speeds
-    private double maxSpeed = 1;
+    private double latchSpeed = 1;
 
     @Override
     public void runOpMode() {
@@ -73,6 +76,11 @@ public class First_Code extends LinearOpMode {
         latchMech = hardwareMap.get(DcMotor.class, "latch");
         latchMech.setDirection(DcMotor.Direction.FORWARD);
 
+        // Sponge
+        spongeMechR = hardwareMap.get(Servo.class, "spongeRight");
+        spongeMechL = hardwareMap.get(Servo.class, "spongeLeft");
+
+        // Initialization
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
@@ -80,7 +88,7 @@ public class First_Code extends LinearOpMode {
         // Active
         while (opModeIsActive()) {
 
-
+            // BOOSTERS
             if(gamepad1.right_trigger > 0){
                 telemetry.addData("Speed", "Sonic");
                 telemetry.update();
@@ -94,7 +102,6 @@ public class First_Code extends LinearOpMode {
             }
 
             // DUAL STICK DRIVE
-
             if(gamepad1.left_stick_y < 0){
                 rightDrive.setPower(stickSpeed);
                 leftDrive.setPower(stickSpeed);
@@ -134,14 +141,23 @@ public class First_Code extends LinearOpMode {
 
             ////////////// MECH CODE //////////////
 
-            // LATCH MECH
-
+            // LATCH ARM MECH
             if(gamepad1.right_bumper){
-                latchMech.setPower(maxSpeed);
+                latchMech.setPower(latchSpeed);
             }else if(gamepad1.left_bumper){
-                latchMech.setPower(-maxSpeed);
-            }else{
+                latchMech.setPower(-latchSpeed);
+            }else {
+                latchMech.setPower(0);
                 latchMech.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
+
+            // LATCH SPONGE MECH
+            if(gamepad1.a){
+                spongeMechR.setPosition(0);
+                spongeMechL.setPosition(0);
+            }else if(gamepad1.b){
+                spongeMechR.setPosition(1);
+                spongeMechL.setPosition(1);
             }
         }
     }
