@@ -38,7 +38,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Drive Code", group="Shmada Software")
+@TeleOp(name="6038 Learner's Permit", group="Shmada Software")
 
 public class First_Code extends LinearOpMode {
 
@@ -50,7 +50,7 @@ public class First_Code extends LinearOpMode {
 
     // Drive Speeds
     private double dpadSpeed = .3;
-    private double stickSpeed = .5;
+    private double stickSpeed = .6;
 
     // Turn Speeds
     private double turnMultiplier = .9;
@@ -95,7 +95,7 @@ public class First_Code extends LinearOpMode {
                 stickSpeed = 1;
                 dpadSpeed = 0.6;
             }else{
-                stickSpeed = 0.5;
+                stickSpeed = 0.6;
                 dpadSpeed = 0.3;
                 telemetry.addData("Speed", "Snail");
                 telemetry.update();
@@ -154,10 +154,10 @@ public class First_Code extends LinearOpMode {
             // LATCH SPONGE MECH
             if(gamepad1.a){
                 spongeMechR.setPosition(0);
-                spongeMechL.setPosition(0);
+                spongeMechL.setPosition(1);
             }else if(gamepad1.b){
                 spongeMechR.setPosition(1);
-                spongeMechL.setPosition(1);
+                spongeMechL.setPosition(0);
             }
         }
     }
