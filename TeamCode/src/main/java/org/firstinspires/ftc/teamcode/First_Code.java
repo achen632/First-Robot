@@ -46,7 +46,7 @@ public class First_Code extends LinearOpMode {
     private DcMotor rightDrive = null;
     private DcMotor latchMech = null;
     private Servo spongeMechR = null;
-    private Servo spongeMechL = null;
+//    private Servo spongeMechL = null;
 
     // Drive Speeds
     private double dpadSpeed = .3;
@@ -78,7 +78,7 @@ public class First_Code extends LinearOpMode {
 
         // Sponge
         spongeMechR = hardwareMap.get(Servo.class, "spongeRight");
-        spongeMechL = hardwareMap.get(Servo.class, "spongeLeft");
+//        spongeMechL = hardwareMap.get(Servo.class, "spongeLeft");
 
         // Initialization
         telemetry.addData("Status", "Initialized");
@@ -154,10 +154,10 @@ public class First_Code extends LinearOpMode {
             // LATCH SPONGE MECH
             if(gamepad1.a){
                 spongeMechR.setPosition(0);
-                spongeMechL.setPosition(1);
+//                spongeMechL.setPosition(1);
             }else if(gamepad1.b){
-                spongeMechR.setPosition(1);
-                spongeMechL.setPosition(0);
+                spongeMechR.setPosition(.5);
+//                spongeMechL.setPosition(0);
             }
         }
     }
