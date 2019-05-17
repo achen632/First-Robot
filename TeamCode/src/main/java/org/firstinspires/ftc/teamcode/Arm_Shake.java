@@ -34,51 +34,25 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="6038 Learner's Permit", group="Shmada Software")
+@TeleOp(name="Arm", group="Shmada Software")
 
 public class Arm_Shake extends LinearOpMode {
 
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
-    private DcMotor latchMech = null;
-    private Servo spongeMechR = null;
-    private Servo spongeMechL = null;
-    private Servo claimMech = null;
+    private DcMotor bicep = null;
+    private DcMotor forearm = null;
 
-    // Drive Speeds
-    private double dpadSpeed = .3;
-    private double stickSpeed = .6;
-
-    // Turn Speeds
-    private double turnMultiplier = .9;
-    private double dpadTurnSpeed = dpadSpeed * turnMultiplier;
-    private double stickTurnSpeed = stickSpeed * turnMultiplier;
-
-    // Mech Speeds
-    private double latchSpeed = 1;
+    // Arm Speeds
+    private double bicepSpeed = .15;
+    private double forearmSpeed = .2;
 
     @Override
     public void runOpMode() {
-
-        // Initial
-
-        // Drive
-        leftDrive  = hardwareMap.get(DcMotor.class, "left");
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-
-        rightDrive = hardwareMap.get(DcMotor.class, "right");
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
-
         // Mech
-        latchMech = hardwareMap.get(DcMotor.class, "latch");
-        latchMech.setDirection(DcMotor.Direction.FORWARD);
+        bicep = hardwareMap.get(DcMotor.class, "bicep");
+        bicep.setDirection(DcMotor.Direction.FORWARD);
 
-        // Sponge Servos
-//        spongeMechR = hardwareMap.get(Servo.class, "spongeRight");
-//        spongeMechL = hardwareMap.get(Servo.class, "spongeLeft");
-
-        // Claim Servo
-        claimMech = hardwareMap.get(Servo.class, "claim");
+//        forearm = hardwareMap.get(DcMotor.class, "forearm");
+//        forearm.setDirection(DcMotor.Direction.FORWARD);
 
         // Initialization
         telemetry.addData("Status", "Initialized");
@@ -87,84 +61,32 @@ public class Arm_Shake extends LinearOpMode {
 
         // Active
         while (opModeIsActive()) {
-
-            // BOOSTERS
-            if(gamepad1.right_trigger > 0){
-                telemetry.addData("Speed", "Sonic");
-                telemetry.update();
-                stickSpeed = 1;
-                dpadSpeed = 0.6;
-            }else{
-                stickSpeed = 0.6;
-                dpadSpeed = 0.3;
-                telemetry.addData("Speed", "Snail");
-                telemetry.update();
-            }
-
-            // DUAL STICK DRIVE
+            // LEFT JOY UP
             if(gamepad1.left_stick_y < 0){
-                rightDrive.setPower(stickSpeed);
-                leftDrive.setPower(stickSpeed);
-
+                bicep.setPower(bicepSpeed);
+            // LEFT JOY DOWN
             }else if(gamepad1.left_stick_y > 0){
-                rightDrive.setPower(-stickSpeed);
-                leftDrive.setPower(-stickSpeed);
-
-            }else if(gamepad1.right_stick_x > 0){
-                rightDrive.setPower(-stickTurnSpeed);
-                leftDrive.setPower(stickTurnSpeed);
-
-            }else if(gamepad1.right_stick_x < 0) {
-                rightDrive.setPower(stickTurnSpeed);
-                leftDrive.setPower(-stickTurnSpeed);
-
-            // DPAD DRIVE
-            }else if(gamepad1.dpad_up){
-                rightDrive.setPower(dpadSpeed);
-                leftDrive.setPower(dpadSpeed);
-
-            }else if(gamepad1.dpad_down){
-                rightDrive.setPower(-dpadSpeed);
-                leftDrive.setPower(-dpadSpeed);
-
-            }else if(gamepad1.dpad_left){
-                rightDrive.setPower(dpadTurnSpeed);
-                leftDrive.setPower(-dpadTurnSpeed);
-
-            }else if(gamepad1.dpad_right){
-                rightDrive.setPower(-dpadTurnSpeed);
-                leftDrive.setPower(dpadTurnSpeed);
+                bicep.setPower(-bicepSpeed);
             }else{
-                rightDrive.setPower(0);
-                leftDrive.setPower(0);
+                bicep.setPower(0);
+                bicep.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
 
-            ////////////// MECH CODE //////////////
-
-            // LATCH ARM MECH
-            if(gamepad1.right_bumper){
-                latchMech.setPower(latchSpeed);
-            }else if(gamepad1.left_bumper){
-                latchMech.setPower(-latchSpeed);
-            }else {
-                latchMech.setPower(0);
-                latchMech.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            }
-
-            // CLAIM MECH
+            // BUTTONS
             if(gamepad1.x){
-                claimMech.setPosition(0);
-            }else if(gamepad1.y){
-                claimMech.setPosition(.5);
+                bicep.setPower(0);
+                bicep.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             }
 
-            // LATCH SPONGE MECH
-//            if(gamepad1.a){
-//                spongeMechR.setPosition(0);
-//                spongeMechL.setPosition(1);
-//            }else if(gamepad1.b){
-//                spongeMechR.setPosition(1);
-//                spongeMechL.setPosition(0);
+            // RIGHT JOY UP
+//            if(gamepad1.right_stick_y < 0){
+//                forearm.setPower(forearmSpeed);
+//            // RIGHT JOY DOWN
+//            }else if(gamepad1.right_stick_y > 0){
+//                forearm.setPower(-forearmSpeed);
+//            }else{
+//                forearm.setPower(0);
+//                forearm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //            }
         }
     }
